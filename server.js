@@ -17,6 +17,7 @@ const app = express();
 
 app.config = config;
 console.log("app.config ===> ", app.config);
+console.log("process.env ===> ", process.env);
 
 // adding Helmet to enhance your API's security
 app.use(helmet());
@@ -33,6 +34,10 @@ app.use(morgan("combined"));
 
 async function connectToMongoDb(counter) {
   const mongoUri = app.config.mongoUrl;
+  if (!mongoUri) {
+    mongoUri = process.env.MONGO_URL;
+  }
+
   mongoose
     .connect(mongoUri, {
       useNewUrlParser: true,
