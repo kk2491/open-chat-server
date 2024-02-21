@@ -33,7 +33,7 @@ app.use(cors());
 app.use(morgan("combined"));
 
 async function connectToMongoDb(counter) {
-  const mongoUri = app.config.mongoUrl;
+  let mongoUri = app.config.mongoUrl;
   if (!mongoUri) {
     mongoUri = process.env.MONGO_URL;
   }
