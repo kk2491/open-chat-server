@@ -53,7 +53,8 @@ module.exports = {
         groupQuery.userIds = queryParams.userId;
       }
 
-      if (queryParams && queryParams.includeUserDetails && queryParams.includeUserDetails == true) {
+      console.log("queryParams : ", queryParams);
+      if (queryParams && queryParams.includeUserDetails && queryParams.includeUserDetails == "true") {
         includeUserDetails = true;
       }
 
@@ -62,7 +63,7 @@ module.exports = {
       for (let i = 0; i < groups.length; i++) {
         if (includeUserDetails) {
           let userList = [];
-          for (let j = 0; j < groups[i].userIds; j++) {
+          for (let j = 0; j < groups[i].userIds.length; j++) {
             let userData = await Users.findById(groups[i].userIds[j]);
             if (userData) {
               userList.push(userData);
