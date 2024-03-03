@@ -1,5 +1,6 @@
 "use strict";
 
+const { Users } = require("../users/schema/models");
 const { Groups } = require("./schema/models");
 
 module.exports = {
@@ -44,6 +45,7 @@ module.exports = {
 
   getAllGroupService: async function (accountId, queryParams) {
     try {
+      let includeUserDetails = false;
       let groupList = [];
       let groupQuery = { accountId: accountId };
 
@@ -51,10 +53,26 @@ module.exports = {
         groupQuery.userIds = queryParams.userId;
       }
 
+      if (queryParams && queryParams.includeUserDetails && queryParams.includeUserDetails == true) {
+        includeUserDetails = true;
+      }
+
       let groups = await Groups.find(groupQuery);
 
       for (let i = 0; i < groups.length; i++) {
-        groupList.push({ id: groups[i].id.toString(), ...JSON.parse(JSON.stringify(groups[i])) });
+        if (includeUserDetails) {
+          let userList = [];
+          for (let j = 0; j < groups[i].userIds; j++) {
+            let userData = await Users.findById(groups[i].userIds[j]);
+            if (userData) {
+              userList.push(userData);
+            }
+          }
+
+          groupList.push({ id: groups[i].id.toString(), users: userList, ...JSON.parse(JSON.stringify(groups[i])) });
+        } else {
+          groupList.push({ id: groups[i].id.toString(), ...JSON.parse(JSON.stringify(groups[i])) });
+        }
       }
 
       return {
